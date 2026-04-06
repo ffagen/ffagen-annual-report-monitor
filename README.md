@@ -1,112 +1,90 @@
-# 📊 A股/港股年报公告监控
+# 📊 Annual Report Monitor - 年报公告监控
 
-定时爬取东方财富、AI财报网等平台当天公布的年报公告，AI自动筛选重点公司（业绩增长/下滑前五、重大亏损），生成分析报告并发送飞书通知。
+> 爬取 A股/港股年报公告 | 智能筛选 | 飞书推送
 
-## ✨ 功能特性
+## ⚠️ Disclaimer / 免责声明
 
-- 📋 **实时爬取** — 东方财富 + AI财报网双数据源，支持A股/港股
-- 🤖 **智能筛选** — 按业绩增速排名，自动标记 Top5 / Flop5
-- 🏭 **重点公司摘要** — 关键词识别：净利润增长、业绩下滑、ST、扭亏为盈
-- 📱 **飞书推送** — 富文本消息，包含表格、简评、报告链接
-- 🎯 **股票池过滤** — 支持只关注持仓股票（`MONITORED_STOCKS`）
-- ⏰ **定时监控** — 可配置检查间隔，默认每天 9:00 / 12:00 / 18:00
+**本工具仅供个人学习与信息参考，不构成任何投资建议。**
 
-## 📖 报告示例
+**This tool is for educational and informational purposes only. It does not constitute any investment advice.**
 
-```
-📊 3月30日年报公告速递
+- 数据来源于公开网络爬取，不保证准确性 | Data sourced from public web scraping — no accuracy guarantee
+- 年报内容仅供信息参考，投资决策需自行研判基本面 | Annual report content is for reference only; investment decisions require your own fundamental analysis
+- **投资风险自担 | Investment decisions are made at your own risk**
+- 本项目基于开源社区精神开发 | Developed in the spirit of the open-source community
+- 如有侵权请联系删除 | For any copyright concerns, please contact for removal
 
-| 股票代码 | 股票名称 | 净利润增速 | 重要事项 |
-|---------|---------|-----------|---------|
-| 600519 | 贵州茅台 | +18.5% | 业绩稳健增长 |
-| 000858 | 五粮液 | +12.3% | 白酒龙头 |
-...
+## ✨ Features
 
-整体披露情况：今日共XX家公司公布年报...
-```
+- 📋 **多源爬取** — 东方财富年报公告
+- 🔍 **智能筛选** — 业绩增长/下滑/扭亏/ST 自动标注
+- 🎯 **自选股过滤** — 仅推送持仓相关年报（可选）
+- 🔔 **飞书推送** — 每日定时推送年报速递
 
-## ⚙️ 配置
+## 📦 Installation
 
-### 环境变量
-
-| 变量 | 必填 | 说明 |
-|------|------|------|
-| `FEISHU_APP_ID` | ✅ | 飞书应用 App ID |
-| `FEISHU_APP_SECRET` | ✅ | 飞书应用 Secret |
-| `FEISHU_CHAT_ID` | ✅ | 飞书群/用户 ID |
-| `MONITORED_STOCKS` | 否 | 关注的股票代码（逗号分隔）|
-| `CHECK_INTERVAL` | 否 | 检查间隔（小时），默认4 |
-
-### 飞书应用权限
-
-- `im:message:send_as_bot` — 发送消息
-
-## 🚀 快速开始
-
-### 1. 安装依赖
+### Environment Variables / 环境变量
 
 ```bash
-pip install requests beautifulsoup4 pandas python-dateutil
+export FEISHU_APP_ID="cli_xxx"           # 必填 | Required
+export FEISHU_APP_SECRET="xxx"            # 必填 | Required
+export FEISHU_CHAT_ID="oc_xxx"           # 必填 | Required
+export MONITORED_STOCKS="600519,000858"  # 可选 | Optional
+export OUT_DIR="~/Documents/财经信息"      # 可选 | Optional
 ```
 
-### 2. 配置飞书机器人
-
-参考 [飞书开放平台文档](https://open.feishu.cn/) 创建应用并获取 App ID / Secret
-
-### 3. 运行
+### Install Dependencies / 安装依赖
 
 ```bash
-cd scripts
-export FEISHU_APP_ID=cli_xxx
-export FEISHU_APP_SECRET=xxx
-export FEISHU_CHAT_ID=oc_xxx
-python3 report_monitor.py
+pip install requests beautifulsoup4
 ```
 
-### 4. 定时任务（crontab）
+### Run / 运行
 
 ```bash
-0 9,12,18 * * * /path/to/run.sh
+python3 ~/.openclaw/skills/ffagen__annual-report-monitor/scripts/report_monitor.py
 ```
 
-## 📁 目录结构
+### Cron Example / 定时任务示例
 
-```
-ffagen-annual-report-monitor/
-├── SKILL.md              # OpenClaw Skill 定义
-├── README.md             # 本文件
-├── scripts/
-│   ├── report_monitor.py   # 主脚本：爬取+分析+推送
-│   ├── feishu_client.py     # 飞书发消息客户端
-│   ├── config.py            # 配置读取
-│   └── run.sh               # 一键运行脚本
+```bash
+# Run at 9am, 12pm, 6pm on weekdays / 工作日9点、12点、18点运行
+0 9,12,18 * * 1-5 /usr/bin/python3 ~/.openclaw/skills/ffagen__annual-report-monitor/scripts/report_monitor.py
 ```
 
-## 🔧 数据来源
+## 📖 Usage Examples / 使用示例
 
-| 网站 | 地址 | 说明 |
-|------|------|------|
-| 东方财富 | push2his.eastmoney.com | 年报公告页面 |
-| AI财报网 | caireport.com | 业绩大全（备用）|
+```
+"帮我查一下今天有哪些公司公布了年报"
+"运行年报监控"
+"生成本周的年报汇总报告"
+```
 
-## 📌 依赖
+## 📊 Output Sample / 输出示例
+
+飞书推送内容：
+- 📊 **X月X日年报公告速递**
+- 📋 当天公布年报公司列表
+- 📈/📉/⚠️ 业绩变化标注
+- 公告原文链接
+
+## 📁 File Structure / 文件结构
+
+```
+ffagen__annual-report-monitor/
+├── SKILL.md                # Skill definition
+└── scripts/
+    ├── report_monitor.py   # Main script
+    ├── config.py           # Configuration
+    └── feishu_client.py    # Feishu client
+```
+
+## 📌 Requirements / 依赖
 
 - Python 3.8+
 - requests
 - beautifulsoup4
-- pandas
-- python-dateutil
 
-## ⚠️ 免责声明
-
-- 数据来源于公开网络接口，不保证完整性、准确性和及时性
-- 本工具仅供参考学习，不构成任何投资建议
-- 投资者据此操作，风险自担
-
-## 📄 开源协议
+## 📄 License
 
 MIT License
-
-## 🙏 致谢
-
-本项目为个人学习研究用途，基于开源社区精神开发
